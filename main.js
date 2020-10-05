@@ -17,12 +17,10 @@ let cliOption = cli.opts();
 const steps = {
 	start: async () => {
 		if (cliOption.action != "encode" && cliOption.action != "decode") {
-			console.log("action not a <encode|decode>");
-			steps.end();
+			steps._endError("action not a <encode|decode>",404);
 		}
-		if (!Number.isInteger(+cliOption.shift)) {
-			console.log("shift not a <number>");
-			steps.end();
+		if (!Number.isInteger(+cliOption.shift)) {			
+			steps._endError("shift not a <number>",400);			
 		}
 
 		return steps._encryptStep();
@@ -32,7 +30,11 @@ const steps = {
 	},
 
 	_end: async () => {
-		rl.close();
+		process.exit(0);
+	},
+	_endError: async (text,err) => {
+		process.stderr.write(text);
+		process.exit(err);
 	},
 };
 steps.start();
