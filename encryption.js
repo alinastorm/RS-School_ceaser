@@ -6,7 +6,7 @@ const fs = require("fs");
 function encrypt({ shift, action, input, output }) {
 	if (input && output) {
 		rStream = fs.createReadStream(input);
-		wStream = fs.createWriteStream(output);
+		wStream = fs.createWriteStream(output, {'flags': 'a'});
 		_errorHadling({ rStream, wStream });
 
 		rStream.pipe(new CeaserStream(shift, action)).pipe(wStream);
@@ -21,13 +21,13 @@ function encrypt({ shift, action, input, output }) {
 		rStream.pipe(new CeaserStream(shift, action)).pipe(process.stdout);
 	}
 	if (!input && output) {
-		wStream = fs.createWriteStream(output);
+		wStream = fs.createWriteStream(output,{'flags': 'a'});
 
 		process.stdin.pipe(new CeaserStream(shift, action)).pipe(wStream);
 	}
 }
 function _errorHadling({ rStream, wStream }) {
-	
+
 	if (rStream) {
 		rStream.on("error", function (err) {
 			process.stderr.write(err.toString());
